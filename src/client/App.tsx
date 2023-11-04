@@ -1,13 +1,9 @@
-import { AuthorizeSpotifyButton } from "./pages/login/AuthorizeSpotifyButton";
-import { Header } from "./pages/login/Header";
+import { Outlet } from "react-router-dom";
 
 function App() {
   return (
-    <div className="flex flex-row justify-center bg-white dark:bg-black h-screen">
-      <div className="flex flex-col my-20 gap-10">
-        <Header />
-        <AuthorizeSpotifyButton />
-      </div>
+    <div className="bg-white dark:bg-black h-screen text-black dark:text-white">
+      <Outlet />
     </div>
   );
 }

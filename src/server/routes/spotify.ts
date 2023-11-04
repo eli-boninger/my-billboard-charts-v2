@@ -42,7 +42,6 @@ spotifyRouter.get(
       if (tokenRes.status === 200) {
         const json = await tokenRes.json();
         if (json.access_token) {
-          console.log("access token", json.access_token);
           req.session.spotifyAccessToken = json.access_token;
         }
         if (json.refresh_token) {
