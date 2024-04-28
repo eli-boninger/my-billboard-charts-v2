@@ -1,6 +1,7 @@
 import express from "express";
-import { User } from "../models/User";
+import { PrismaClient, Prisma } from "@prisma/client";
 
+const prisma = new PrismaClient();
 const userRouter = express.Router();
 
 userRouter.get("/data", async (req, res) => {
@@ -17,10 +18,12 @@ userRouter.get("/data", async (req, res) => {
   const resultJson = await result.json();
 
   try {
-    await User.create({
-      email: resultJson.email,
-      spotifyAuthorized: true,
-      spotifyRefreshToken: req.session.spotifyRefreshToken,
+    await prisma.user.create({
+      data: {
+        email: resultJson.email,
+        spotifyAuthorized: true,
+        spotifyRefreshToken: req.session.spotifyRefreshToken,
+      },
     });
     res.send(resultJson.email);
   } catch (e) {

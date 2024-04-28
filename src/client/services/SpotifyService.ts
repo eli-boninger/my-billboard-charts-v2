@@ -1,5 +1,8 @@
+import axios from "axios";
+
 export const authorizeSpotify = async () => {
-  fetch("api/spotify/authorize", { method: "POST", mode: "no-cors" });
+  const res = await axios.post("api/spotify/authorize");
+  window.location = res.data;
 };
 
 export const getUserSession = async (): Promise<boolean> => {

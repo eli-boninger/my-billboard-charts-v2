@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  spotifyAuthorized   Boolean   @default(false) @map("spotify_authorized")
+  spotifyRefreshToken String    @default("") @map("spotify_refresh_token")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  lastUpdateJob       DateTime? @map("last_update_job")
+  password            Password?
+  topItems            TopItem[]
+
+  @@map("user")
+}
+
+model Password {
+  hash   String
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password")
+}
+
+model TopItem {
+  id                String        @id @default(cuid())
+  spotifyId         String        @map("spotify_id")
+  name              String
+  userId            String        @map("user_id")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+  isCurrentlyRanked Boolean       @default(true) @map("is_currently_ranked")
+  topItemType       TopItemType   @map("top_item_type")
+  album             String?
+  artists           String[]
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topItemRanks      TopItemRank[]
+
+  @@unique([spotifyId, userId, topItemType])
+  @@map("top_item")
+}
+
+model TopItemRank {
+  id           String   @id @default(cuid())
+  topItemId    String   @map("top_item_id")
+  rank         Int
+  previousRank Int?     @map("previous_rank")
+  createdAt    DateTime @default(now()) @map("created_at")
+  topItem      TopItem  @relation(fields: [topItemId], references: [id], onDelete: Cascade)
+
+  @@map("top_item_rank")
+}
+
+model session {
+  sid    String   @id @db.VarChar
+  sess   Json     @db.Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], map: "IDX_session_expire")
+}
+
+enum TopItemType {
+  ARTIST
+  TRACK
+
+  @@map("top_item_type")
+}
