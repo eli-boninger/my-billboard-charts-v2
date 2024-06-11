@@ -5,6 +5,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { TopItems } from "./pages/top-items/TopItems";
 import { Login } from "./pages/login/Login";
+import SignUp from "./pages/login/SignUp";
 
 const router = createBrowserRouter([
   {
@@ -12,7 +13,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
+        path: "/login",
         element: <Login />,
       },
       {

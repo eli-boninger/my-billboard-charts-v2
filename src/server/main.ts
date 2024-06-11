@@ -3,11 +3,15 @@ import express from "express";
 import ViteExpress from "vite-express";
 import apiRouter from "./routes/apiRouter";
 import session from "express-session";
+import cookieParser from 'cookie-parser';
 
 declare module "express-session" {
   interface SessionData {
+    userId: string;
+    googleId: string;
     spotifyAccessToken: string;
     spotifyRefreshToken: string;
+    expirationEpochTime: number;
   }
 }
 
@@ -15,6 +19,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(
   session({
@@ -28,10 +33,12 @@ app.use(
     // Boilerplate options, see:
     // * https://www.npmjs.com/package/express-session#resave
     // * https://www.npmjs.com/package/express-session#saveuninitialized
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
   })
 );
+
+
 
 app.use("/api", apiRouter);
 

@@ -6,7 +6,15 @@ export const authorizeSpotify = async () => {
 };
 
 export const getUserSession = async (): Promise<boolean> => {
-  const res = await fetch("api/user/session");
-  const resJson = await res.json();
-  return Boolean(resJson);
+  try {
+    const res = await axios.get("api/user/session");
+    return Boolean(res.data)
+  } catch (err) {
+    return false;
+  }
 };
+
+export const getUserTopTracks = async () => {
+  const res = await axios.get("api/user/top_tracks");
+  console.dir(res.data)
+}

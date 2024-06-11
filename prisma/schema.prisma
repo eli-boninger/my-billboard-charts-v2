@@ -8,25 +8,18 @@ datasource db {
 }
 
 model User {
-  id                  String    @id @default(cuid())
-  email               String    @unique
-  spotifyAuthorized   Boolean   @default(false) @map("spotify_authorized")
-  spotifyRefreshToken String    @default("") @map("spotify_refresh_token")
-  createdAt           DateTime  @default(now()) @map("created_at")
-  updatedAt           DateTime  @updatedAt @map("updated_at")
-  lastUpdateJob       DateTime? @map("last_update_job")
-  password            Password?
-  topItems            TopItem[]
+  id                   String                 @id @default(cuid())
+  name                 String?
+  email                String
+  spotifyAuthorized    Boolean                @default(false) @map("spotify_authorized")
+  spotifyRefreshToken  String                 @default("") @map("spotify_refresh_token")
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @updatedAt @map("updated_at")
+  lastUpdateJob        DateTime?              @map("last_update_job")
+  topItems             TopItem[]
+  FederatedCredentials FederatedCredentials[]
 
   @@map("user")
-}
-
-model Password {
-  hash   String
-  userId String @unique @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("password")
 }
 
 model TopItem {
@@ -71,4 +64,15 @@ enum TopItemType {
   TRACK
 
   @@map("top_item_type")
+}
+
+model FederatedCredentials {
+  id       String @id @default(cuid())
+  userId   String @map("user_id")
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider String
+  subject  String
+
+  @@unique([provider, subject])
+  @@map("federated_credentials")
 }

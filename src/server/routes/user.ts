@@ -18,14 +18,22 @@ userRouter.get("/data", async (req, res) => {
   const resultJson = await result.json();
 
   try {
-    await prisma.user.create({
-      data: {
-        email: resultJson.email,
-        spotifyAuthorized: true,
-        spotifyRefreshToken: req.session.spotifyRefreshToken,
-      },
-    });
-    res.send(resultJson.email);
+    // let existingUser = await prisma.user.findUnique({
+    // where: {
+    // email: resultJson.email
+    // }
+    // })
+    // if (!existingUser) {
+    //   existingUser = await prisma.user.create({
+    //     data: {
+    //       email: resultJson.email,
+    //       spotifyAuthorized: true,
+    //       spotifyRefreshToken: req.session.spotifyRefreshToken,
+    //     },
+    //   });
+    // }
+    // req.session.userId = existingUser?.id;
+    res.redirect("/")
   } catch (e) {
     console.error(e);
     res.status(500);
@@ -33,14 +41,10 @@ userRouter.get("/data", async (req, res) => {
 });
 
 userRouter.get("/session", (req, res) => {
-  console.dir(req.session);
-  if (req.session.spotifyAccessToken) {
-    res.send(true);
-  } else if (req.session.spotifyRefreshToken) {
-    // TODO: refresh logic here
-    res.send(true);
+  if (!!req.session.googleId) {
+    res.status(200).send(true);
   } else {
-    res.send(false);
+    res.status(200).send(false)
   }
 });
 
