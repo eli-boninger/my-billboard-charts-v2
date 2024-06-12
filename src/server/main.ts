@@ -10,7 +10,6 @@ declare module "express-session" {
     userId: string;
     googleId: string;
     spotifyAccessToken: string;
-    spotifyRefreshToken: string;
     expirationEpochTime: number;
   }
 }

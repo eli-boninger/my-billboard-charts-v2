@@ -23,10 +23,10 @@ async function verifyGoogleToken(req: Request & { cookies: any }, res: Response,
         } else {
             throw "Invalid google auth token"
         }
-        next();
+        return next();
     } catch (err) {
-        console.error(err);
-        res.sendStatus(401)
+        console.log("Google access token is expired")
+        return res.status(401).send(err)
     }
 }
 

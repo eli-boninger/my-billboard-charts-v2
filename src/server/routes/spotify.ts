@@ -1,52 +1,24 @@
+import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import express from "express";
-import type { Request } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { v4 as uuidv4 } from "uuid";
 
 const spotifyRouter = express.Router();
+const prisma = new PrismaClient()
 
-spotifyRouter.use(async (req, res, next) => {
-  const currentEpochTime = Math.floor(Date.now() / 1000);
-  if (req.session.spotifyAccessToken && req.session.expirationEpochTime && currentEpochTime < req.session.expirationEpochTime) {
-    next()
-  } else if (req.session.spotifyRefreshToken && process.env.SPOTIFY_CLIENT_ID) {
-    const url = "https://accounts.spotify.com/api/token";
-
-    const payload =
-      new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: req.session.spotifyRefreshToken,
-        client_id: process.env.SPOTIFY_CLIENT_ID
-      })
-
-
-    const response = await axios.post(url, payload, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
-    if (response.status === 200) {
-      const { access_token, refresh_token, expires_in } = response.data;
-      if (access_token) {
-        req.session.spotifyAccessToken = access_token;
-      }
-      if (refresh_token) {
-        req.session.spotifyRefreshToken = refresh_token;
-      }
-      if (expires_in) {
-        req.session.expirationEpochTime = Math.floor(Date.now() / 1000) + expires_in
-      }
-    }
-    next()
-
-  } else {
-    console.error("No session")
-    res.sendStatus(500)
+const setSpotifyAuth = async (req: Request, accessToken?: string, expiresIn?: number, refreshToken?: string) => {
+  if (accessToken) {
+    req.session.spotifyAccessToken = accessToken;
   }
-})
+  if (expiresIn) {
+    req.session.expirationEpochTime = Math.floor(Date.now() / 1000) + expiresIn
+  }
+  await prisma.user.update({ where: { id: req.session.userId }, data: { spotifyRefreshToken: refreshToken, spotifyAuthorized: true } })
+}
 
 spotifyRouter.post("/authorize", (req, res) => {
-  if (req.session.spotifyAccessToken && req.session.spotifyRefreshToken) {
+  if (req.session.spotifyAccessToken) {
     res.sendStatus(204);
   }
   const params = new URLSearchParams({
@@ -90,22 +62,61 @@ spotifyRouter.get(
       );
 
       if (tokenRes?.status === 200) {
-        if (tokenRes.data.access_token) {
-          req.session.spotifyAccessToken = tokenRes.data.access_token;
-        }
-        if (tokenRes.data.refresh_token) {
-          req.session.spotifyRefreshToken = tokenRes.data.refresh_token;
-        }
-        if (tokenRes.data.expires_in) {
-          req.session.expirationEpochTime = Math.floor(Date.now() / 1000) + tokenRes.data.expires_in
-        }
-        res.redirect("/api/user/data");
+        const { access_token, refresh_token, expires_in } = tokenRes.data;
+        await setSpotifyAuth(req, access_token, expires_in, refresh_token);
+        res.redirect("/tracks");
       } else {
         res.redirect("/?error=failed_token_post");
       }
     }
   }
 );
+
+
+/********* routes needing existing spotify session *************/
+const spotifyOAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const currentEpochTime = Math.floor(Date.now() / 1000);
+
+  // If user has an unexpired token, do nothing
+  if (req.session.spotifyAccessToken && req.session.expirationEpochTime && currentEpochTime < req.session.expirationEpochTime) {
+    return next()
+  }
+  const user = await prisma.user.findUnique({ where: { id: req.session.userId } });
+
+  // If user's token is expired but they have a refresh token, execute the refresh flow
+  if (user?.spotifyRefreshToken && process.env.SPOTIFY_CLIENT_ID) {
+    const url = "https://accounts.spotify.com/api/token";
+
+    const payload =
+      new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: user.spotifyRefreshToken,
+        client_id: process.env.SPOTIFY_CLIENT_ID
+      })
+
+
+    const response = await axios.post(url, payload, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+    if (response.status === 200) {
+      const { access_token, refresh_token, expires_in } = response.data;
+      await setSpotifyAuth(req, access_token, expires_in, refresh_token);
+    }
+    next()
+
+  } else {
+    // if user has no valid token and no refresh token, they need to initiate the authorization flow
+    res.sendStatus(403);
+  }
+}
+
+spotifyRouter.use(spotifyOAuthMiddleware);
+
+spotifyRouter.get("/session", async (req, res) => {
+  res.status(200).send(true);
+})
 
 spotifyRouter.get("/top_tracks", async (req, res) => {
   const result = await axios.get("https://api.spotify.com/v1/me/top/tracks", { headers: { Authorization: `Bearer ${req.session.spotifyAccessToken}` } });

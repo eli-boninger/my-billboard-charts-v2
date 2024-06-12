@@ -14,7 +14,16 @@ export const getUserSession = async (): Promise<boolean> => {
   }
 };
 
-export const getUserTopTracks = async () => {
-  const res = await axios.get("api/user/top_tracks");
-  console.dir(res.data)
+export const getUserSpotifySession = async (): Promise<boolean> => {
+  try {
+    const res = await axios.get("api/spotify/session");
+    return Boolean(res.data)
+  } catch (err) {
+    return false;
+  }
+};
+
+export const getUserTopItems = async (itemPath: string) => {
+  const res = await axios.get(`api/spotify/${itemPath}`);
+  return res.data
 }

@@ -1,43 +1,52 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { getUserSession } from "../../services/SpotifyService";
 import { Header } from "./Header";
 import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 export const Login = () => {
   const navigate = useNavigate();
+  const divRef = useRef(null);
+  const [_, setCookie] = useCookies();
+
+  function handleCredentialResponse(response: { credential: string }) {
+    console.log("Encoded JWT ID token: " + response.credential);
+    setCookie("google_auth_token", response.credential);
+    navigate("/tracks");
+  }
+
+  function showGoogleLogin() {
+    if (divRef.current) {
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID,
+        callback: handleCredentialResponse,
+      });
+      window.google.accounts.id.renderButton(divRef.current, {
+        theme: "filled_blue",
+        size: "large",
+        type: "standard",
+        text: "continue_with",
+      });
+      window.google.accounts.id.prompt();
+    }
+  }
+
   useEffect(() => {
     async function getSession() {
       const hasSession = await getUserSession();
       if (hasSession) {
         navigate("/tracks");
+      } else {
+        showGoogleLogin();
       }
     }
     getSession();
-  }, []);
+  }, [divRef.current]);
 
   return (
     <div className="flex flex-row justify-center ">
-      <div className="flex flex-col gap-10 my-20">
+      <div className="flex flex-col gap-10 my-20" ref={divRef}>
         <Header />
-        <div
-          id="g_id_onload"
-          data-client_id="653090121846-kta0c86afjjbtuav600shhaov6366v4e.apps.googleusercontent.com"
-          data-context="signin"
-          data-ux_mode="popup"
-          data-login_uri="http://localhost:3000/api/auth/login"
-          data-auto_prompt="false"
-        ></div>
-
-        <div
-          className="g_id_signin"
-          data-type="standard"
-          data-shape="pill"
-          data-theme="outline"
-          data-text="continue_with"
-          data-size="large"
-          data-logo_alignment="center"
-          data-width="250"
-        ></div>
       </div>
     </div>
   );

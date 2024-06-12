@@ -3,9 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { TopItems } from "./pages/top-items/TopItems";
+import TopItems from "./pages/top-items/TopItems";
 import { Login } from "./pages/login/Login";
-import SignUp from "./pages/login/SignUp";
 
 const router = createBrowserRouter([
   {
@@ -19,10 +18,12 @@ const router = createBrowserRouter([
       {
         path: "/tracks",
         element: <TopItems topItemType="track" />,
+        loader: () => TopItems.loader("top_tracks"),
       },
       {
         path: "/artists",
         element: <TopItems topItemType="artist" />,
+        loader: () => TopItems.loader("top_artists"),
       },
     ],
   },
