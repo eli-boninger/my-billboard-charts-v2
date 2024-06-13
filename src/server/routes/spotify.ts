@@ -91,19 +91,24 @@ const spotifyOAuthMiddleware = async (req: Request, res: Response, next: NextFun
       new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: user.spotifyRefreshToken,
-        client_id: process.env.SPOTIFY_CLIENT_ID
       })
 
-
-    const response = await axios.post(url, payload, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+    try {
+      const response = await axios.post(url, payload, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Basic ' + (Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64'))
+        }
+      })
+      if (response.status === 200) {
+        const { access_token, refresh_token, expires_in } = response.data;
+        await setSpotifyAuth(req, access_token, expires_in, refresh_token);
       }
-    })
-    if (response.status === 200) {
-      const { access_token, refresh_token, expires_in } = response.data;
-      await setSpotifyAuth(req, access_token, expires_in, refresh_token);
+    } catch (err) {
+      console.error("Error refreshing token:", err)
+      return res.status(500).send("Error refreshng token");
     }
+
     next()
 
   } else {
