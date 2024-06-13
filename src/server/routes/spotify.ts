@@ -3,6 +3,7 @@ import axios from "axios";
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import { v4 as uuidv4 } from "uuid";
+import camelize from 'camelize';
 
 const spotifyRouter = express.Router();
 const prisma = new PrismaClient()
@@ -125,7 +126,7 @@ spotifyRouter.get("/session", async (req, res) => {
 
 spotifyRouter.get("/top_tracks", async (req, res) => {
   const result = await axios.get("https://api.spotify.com/v1/me/top/tracks", { headers: { Authorization: `Bearer ${req.session.spotifyAccessToken}` } });
-  res.json(result.data)
+  res.json(camelize(result.data))
 });
 
 
