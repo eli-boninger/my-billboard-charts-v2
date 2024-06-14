@@ -8,8 +8,10 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@mui/icons-material": "^5.15.20",
     "@prisma/client": "^5.13.0",
     "axios": "^1.7.2",
+    "bootstrap": "^5.3.3",
     "camelize": "^1.0.1",
     "connect-pg-simple": "^9.0.1",
     "cookie-parser": "^1.4.6",
@@ -19,6 +21,7 @@
     "express-session": "^1.17.3",
     "google-auth-library": "^9.10.0",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.10.2",
     "react-cookie": "^7.1.4",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.18.0",

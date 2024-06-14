@@ -1,19 +1,18 @@
-import { TopItemType } from "../../models/TopItem";
-import { SpotifyTopItemsRequestResult } from "../../models/SpotifyApiModels";
+import { ListGroup } from "react-bootstrap";
 import { TopItemsListItem } from "./TopItemsListItem";
 
 interface Props {
   topItemType: TopItemType;
-  topItems: SpotifyTopItemsRequestResult;
+  topItems: TopItem[];
 }
 
 export const TopItemsList = (props: Props) => {
-  const { topItemType, topItems } = props;
+  const { topItems } = props;
   return (
-    <div style={{ width: "100%", maxWidth: 360 }}>
-      {topItems.items.map((item, index) => (
+    <ListGroup>
+      {topItems.map((item: TopItem, index: number) => (
         <TopItemsListItem key={item.id} topItem={item} index={index} />
       ))}
-    </div>
+    </ListGroup>
   );
 };

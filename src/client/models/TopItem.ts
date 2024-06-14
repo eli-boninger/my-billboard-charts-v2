@@ -1,1 +1,1 @@
-export type TopItemType = "artist" | "track";
+type TopItemType = 'TRACK' | 'ARTIST'

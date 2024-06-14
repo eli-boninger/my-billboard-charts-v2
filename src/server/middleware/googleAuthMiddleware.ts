@@ -1,10 +1,6 @@
-import express, { Request, Response } from "express";
-import SpotifyRouter from "./spotify";
-import UserRouter from "./user";
-import authRouter from "./auth";
 import { OAuth2Client } from "google-auth-library";
+import { Request, Response } from "express";
 
-const apiRouter = express.Router();
 const client = new OAuth2Client();
 
 async function verifyGoogleToken(req: Request & { cookies: any }, res: Response, next: () => void) {
@@ -30,9 +26,4 @@ async function verifyGoogleToken(req: Request & { cookies: any }, res: Response,
     }
 }
 
-
-apiRouter.use("/spotify", verifyGoogleToken, SpotifyRouter);
-apiRouter.use("/user", verifyGoogleToken, UserRouter);
-apiRouter.use("/auth", authRouter)
-
-export default apiRouter;
+export default verifyGoogleToken;

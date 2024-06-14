@@ -5,6 +5,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import TopItems from "./pages/top-items/TopItems";
 import { Login } from "./pages/login/Login";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const router = createBrowserRouter([
   {
@@ -17,12 +18,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/tracks",
-        element: <TopItems topItemType="track" />,
+        element: <TopItems topItemType="TRACK" />,
         loader: () => TopItems.loader("top_tracks"),
       },
       {
         path: "/artists",
-        element: <TopItems topItemType="artist" />,
+        element: <TopItems topItemType="ARTIST" />,
         loader: () => TopItems.loader("top_artists"),
       },
     ],

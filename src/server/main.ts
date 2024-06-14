@@ -1,9 +1,10 @@
 import "dotenv/config";
 import express from "express";
 import ViteExpress from "vite-express";
-import apiRouter from "./routes/apiRouter";
+import apiRouter from "./routes/api";
 import session from "express-session";
 import cookieParser from 'cookie-parser';
+import { updateTopItemsForAllUsers } from "./tasks/updateTopItemsForAllUsers";
 
 declare module "express-session" {
   interface SessionData {
@@ -37,7 +38,7 @@ app.use(
   })
 );
 
-
+updateTopItemsForAllUsers()
 
 app.use("/api", apiRouter);
 
