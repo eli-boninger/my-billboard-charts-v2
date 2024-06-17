@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { getUserSession } from "../../services/SpotifyService";
+import SpotifyService from "../../services/SpotifyService";
 import { Header } from "./Header";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -32,7 +32,7 @@ export const Login = () => {
 
   useEffect(() => {
     async function getSession() {
-      const hasSession = await getUserSession();
+      const hasSession = await SpotifyService.instance.getUserSession();
       if (hasSession) {
         navigate("/tracks");
       } else {

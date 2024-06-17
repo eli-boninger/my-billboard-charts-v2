@@ -25,6 +25,7 @@ export default [
       {
         path: "track_details/:id",
         element: <ItemDetail />,
+        loader: ItemDetail.loader,
       },
     ],
   },

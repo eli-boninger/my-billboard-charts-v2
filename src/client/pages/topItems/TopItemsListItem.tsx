@@ -1,6 +1,7 @@
 import { ListItem, ListItemButton, Typography } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import { Link } from "react-router-dom";
 
 interface Props {
   topItem: TopItem;
@@ -44,9 +45,11 @@ export const TopItemsListItem = (props: Props) => {
 
   return (
     <ListItem key={topItem.id} disablePadding>
-      <ListItemButton>
-        <ListItemContent />
-      </ListItemButton>
+      <Link to={`/track_details/${topItem.topItemId}`}>
+        <ListItemButton>
+          <ListItemContent />
+        </ListItemButton>
+      </Link>
     </ListItem>
   );
 };

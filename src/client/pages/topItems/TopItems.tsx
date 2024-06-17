@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import { getUserTopItems } from "../../services/SpotifyService";
+import SpotifyService from "../../services/SpotifyService";
 import { TopItemsList } from "./TopItemsList";
 import { Tabs, Tab } from "@mui/material";
 import { useState } from "react";
@@ -9,8 +9,8 @@ interface Props {
 }
 
 async function loader(typePath: string) {
-  const tracks = await getUserTopItems("tracks");
-  const artists = await getUserTopItems("artists");
+  const tracks = await SpotifyService.instance.getUserTopItems("tracks");
+  const artists = await SpotifyService.instance.getUserTopItems("artists");
   return { tracks, artists };
 }
 

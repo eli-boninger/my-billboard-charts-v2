@@ -6,6 +6,17 @@ import camelize from 'camelize';
 
 const prisma = new PrismaClient();
 
+export class UserServiceError extends Error {
+    statusCode: number;
+    constructor(msg: string, statusCode: number) {
+        super(msg);
+
+        this.statusCode = statusCode;
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, UserServiceError.prototype);
+    }
+}
+
 export type TopItemAndRank =
     TopItemRank & TopItem
 
@@ -87,4 +98,32 @@ export const getTopTracks = async (userId: string): Promise<TopItemAndRank[]> =>
         return tracks;
     }
     return [];
+}
+
+export const getTrackDetails = async (userId: string, id: TopItem["id"]) => {
+    const topItem = await prisma.topItem.findFirst({
+        include: {
+            topItemRanks: {
+                orderBy: {
+                    createdAt: 'asc'
+                }
+            }
+        }, where: { id, userId }
+    });
+
+    if (!topItem) {
+        throw new UserServiceError("Not found", 404)
+    }
+
+    if (userId !== topItem?.userId) {
+        throw new UserServiceError("Forbidden", 403)
+    }
+
+    const allRanks = topItem.topItemRanks.map(tir => tir.rank)
+    const highestRank = Math.max(...allRanks)
+    const daysAtHighestRank = allRanks.reduce((accum: number, cur: number) => cur === highestRank ? accum + 1 : accum, 0);
+    const daysOnChart = allRanks.length;
+    const firstDayOnChart = topItem.topItemRanks[0]
+
+    return { highestRank, daysAtHighestRank, daysOnChart, firstDayOnChart }
 }

@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import {
-  getUserSession,
-  getUserSpotifySession,
-} from "./services/SpotifyService";
+import SpotifyService from "./services/SpotifyService";
 import { AuthorizeSpotifyButton } from "./pages/login/AuthorizeSpotifyButton";
 
 function App() {
@@ -12,14 +9,15 @@ function App() {
 
   useEffect(() => {
     async function getSession() {
-      const hasSession = await getUserSession();
+      const hasSession = await SpotifyService.instance.getUserSession();
       if (hasSession) {
         navigate("/tracks");
       } else {
         navigate("/login");
       }
 
-      const hasSpotifyAuth = await getUserSpotifySession();
+      const hasSpotifyAuth =
+        await SpotifyService.instance.getUserSpotifySession();
       if (hasSpotifyAuth) {
         setIsSpotifyAuthorized(true);
       }

@@ -3,7 +3,7 @@ import express from "express";
 import type { Request } from "express";
 import { v4 as uuidv4 } from "uuid";
 import spotifyOAuthMiddleware, { setSpotifyAuth } from "../middleware/spotifyAccessMiddleware";
-import { getTopArtists, getTopTracks } from "../services/userService";
+import { UserServiceError, getTopArtists, getTopTracks, getTrackDetails } from "../services/userService";
 
 const spotifyRouter = express.Router();
 
@@ -79,6 +79,18 @@ spotifyRouter.get("/top_tracks", async (req, res) => {
 spotifyRouter.get("/top_artists", async (req, res) => {
   const result = await getTopArtists(req.session.userId!)
   res.json(result)
+})
+
+spotifyRouter.get("/top_items/:id/details", async (req, res) => {
+  try {
+    const result = await getTrackDetails(req.session.userId!, req.params.id);
+    res.json(result)
+  } catch (e) {
+    console.error(e)
+    if (e instanceof UserServiceError) {
+      res.status(e.statusCode).send(e.message);
+    }
+  }
 })
 
 
