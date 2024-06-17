@@ -10,5 +10,9 @@ module.exports = {
       },
     },
   },
+  important: '#root',
+  corePlugins: {
+    preflight: false
+  },
   plugins: [],
 };

@@ -2,6 +2,7 @@
 import type { SpotifyTopResultItem } from "../models/spotifyApiModels";
 import { TopItemType, Prisma, PrismaClient } from "@prisma/client";
 import type { TopItemRank, User, TopItem } from "@prisma/client";
+import camelize from 'camelize';
 
 const prisma = new PrismaClient();
 
@@ -12,7 +13,7 @@ export const getTopItemsByUserId = async (id: User["id"], topItemType: TopItemTy
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1)
 
-    const items = await prisma.$queryRaw<Array<TopItemAndRank>>(Prisma.sql`
+    const items = await prisma.$queryRaw<Array<any>>(Prisma.sql`
         SELECT  ti.*, tir.*
         FROM    top_item ti INNER JOIN
                 (
@@ -25,7 +26,7 @@ export const getTopItemsByUserId = async (id: User["id"], topItemType: TopItemTy
                             AND MaxDates.MaxDate = tir.created_at
         WHERE ti.user_id = ${id} AND ti.is_currently_ranked = TRUE AND ti.top_item_type::text = ${topItemType};
     `);
-    return items.sort((a, b) => a.rank - b.rank)
+    return items.sort((a, b) => a.rank - b.rank).map(camelize)
 }
 
 export const setAllItemsUnranked = async (userId: User["id"], topItemType: TopItemType = TopItemType.TRACK) => {

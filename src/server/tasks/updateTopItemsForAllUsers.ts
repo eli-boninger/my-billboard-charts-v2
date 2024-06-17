@@ -13,7 +13,16 @@ export const updateTopItemsForAllUsers = async () => {
     console.info("Updating top items for all users")
 
     const users = await getAllSpotifyAuthorizedUsers();
-    users.forEach(u => updateAllUserTopItems(u.id, u.spotifyRefreshToken))
+    const today = new Date();
+    let updated = 0;
+    users.forEach(u => {
+        if (u.lastUpdateJob?.setHours(0, 0, 0, 0) !== today.setHours(0, 0, 0, 0)) {
+            updateAllUserTopItems(u.id, u.spotifyRefreshToken)
+            updated++;
+        }
+    })
+    console.info(`${updated} users' top items updated`);
+    console.info("********************************")
 }
 
 const refreshAccessToken = async (refreshToken: User["spotifyRefreshToken"]) => {
@@ -63,12 +72,13 @@ const updateAllUserTopItems = async (id: User["id"], refreshToken: User["spotify
 
     try {
         newTracksList.forEach((t, index) => {
-            upsertTopItem(t, index, id, TopItemType.TRACK, topTracks.find(tt => tt.spotifyId === t.id)?.rank)
+            const previousRank = topTracks.find(tt => tt.spotifyId === t.id)?.rank
+            upsertTopItem(t, index, id, TopItemType.TRACK, previousRank)
         })
         newArtistsList.forEach((a, index) => {
-            console.dir(a)
             upsertTopItem(a, index, id, TopItemType.ARTIST, topArtists.find(ta => ta.spotifyId === a.id)?.rank)
         })
+        await prisma.user.update({ where: { id }, data: { lastUpdateJob: new Date() } })
     } catch (e) {
         console.error(e)
     }

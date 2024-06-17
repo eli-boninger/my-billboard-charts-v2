@@ -1,5 +1,6 @@
-import { ListGroup } from "react-bootstrap";
-// import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
+import { ListItem, ListItemButton, ListItemText } from "@mui/material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 
 interface Props {
   topItem: TopItem;
@@ -7,25 +8,33 @@ interface Props {
 }
 
 export const TopItemsListItem = (props: Props) => {
-  const { topItem, index } = props;
+  const { topItem } = props;
 
   const labelId = `list-item-label-${topItem.id}`;
   const rankChange = topItem.previousRank
     ? topItem.rank - topItem.previousRank
     : null;
-  return (
-    <ListGroup.Item>
-      <span className="mx-2.5 text-xl font-bold">{index + 1}</span>
+  const listItemContent = (
+    <div>
+      <span className="mx-2.5 text-xl font-bold">{topItem.rank + 1}</span>
       <span className="min-w-80 mx-2.5 w-80">
         {rankChange !== null && rankChange !== 0 && (
           <span>
-            {/* {rankChange! > 0 ? <ArrowDropDown /> : <ArrowDropUp />}{" "} */}
+            {rankChange! > 0 ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}{" "}
             {Math.abs(rankChange!)}
           </span>
         )}
       </span>
 
       <span className="text-base">{topItem.name}</span>
-    </ListGroup.Item>
+    </div>
+  );
+
+  return (
+    <ListItem key={topItem.id} disablePadding>
+      <ListItemButton>
+        <ListItemText id={labelId} primary={listItemContent} />
+      </ListItemButton>
+    </ListItem>
   );
 };

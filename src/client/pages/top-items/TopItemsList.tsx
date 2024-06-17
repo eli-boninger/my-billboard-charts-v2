@@ -1,4 +1,4 @@
-import { ListGroup } from "react-bootstrap";
+import { List } from "@mui/material";
 import { TopItemsListItem } from "./TopItemsListItem";
 
 interface Props {
@@ -9,10 +9,13 @@ interface Props {
 export const TopItemsList = (props: Props) => {
   const { topItems } = props;
   return (
-    <ListGroup>
+    <List
+      dense
+      sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+    >
       {topItems.map((item: TopItem, index: number) => (
         <TopItemsListItem key={item.id} topItem={item} index={index} />
       ))}
-    </ListGroup>
+    </List>
   );
 };

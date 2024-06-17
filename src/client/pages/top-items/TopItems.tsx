@@ -1,8 +1,8 @@
 import { useLoaderData } from "react-router-dom";
 import { getUserTopItems } from "../../services/SpotifyService";
 import { TopItemsList } from "./TopItemsList";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
+import { Tabs, Tab } from "@mui/material";
+import { useState } from "react";
 
 interface Props {
   topItemType: TopItemType;
@@ -15,22 +15,61 @@ async function loader(typePath: string) {
 }
 
 const TopItems = (props: Props) => {
-  const { topItemType } = props;
+  const [selectedTab, setSelectedTab] = useState(0);
   const { tracks, artists } = useLoaderData() as Awaited<
     ReturnType<typeof loader>
   >;
 
   return (
-    <Tabs defaultActiveKey={topItemType} className="mb-3">
-      <Tab eventKey="tracks" title="Tracks">
+    <>
+      <Tabs
+        value={selectedTab}
+        className="mb-3"
+        onChange={(e, newValue: number) => setSelectedTab(newValue)}
+      >
+        <Tab
+          label="Tracks"
+          id="tab-panel-tracks"
+          aria-controls="tab-panel-tracks"
+        />
+        <Tab
+          label="Artists"
+          id="tab-panel-artists"
+          aria-controls="tab-panel-artists"
+        />
+      </Tabs>
+      <CustomTabPanel value={selectedTab} index={0} panelName="tracks">
         <TopItemsList topItemType="TRACK" topItems={tracks || []} />
-      </Tab>
-      <Tab eventKey="artists" title="Artists">
+      </CustomTabPanel>
+      <CustomTabPanel value={selectedTab} index={1} panelName="artists">
         <TopItemsList topItemType="ARTIST" topItems={artists || []} />
-      </Tab>
-    </Tabs>
+      </CustomTabPanel>
+    </>
   );
 };
+
+function CustomTabPanel({
+  value,
+  index,
+  children,
+  panelName,
+}: {
+  value: number;
+  index: number;
+  children: React.ReactNode;
+  panelName: string;
+}) {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tab-panel-${panelName}`}
+      aria-labelledby={`tab-panel-${panelName}`}
+    >
+      {value === index && <div>{children}</div>}
+    </div>
+  );
+}
 
 TopItems.loader = loader;
 export default TopItems;
