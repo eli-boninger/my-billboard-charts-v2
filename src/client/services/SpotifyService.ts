@@ -1,4 +1,5 @@
 import axios from "axios";
+import { makeApiRequest } from "./ApiService";
 
 export const authorizeSpotify = async () => {
   const res = await axios.post("api/spotify/authorize");
@@ -24,6 +25,6 @@ export const getUserSpotifySession = async (): Promise<boolean> => {
 };
 
 export const getUserTopItems = async (itemPath: string): Promise<TopItem[]> => {
-  const res = await axios.get(`api/spotify/top_${itemPath}`);
+  const res = await makeApiRequest(() => axios.get(`api/spotify/top_${itemPath}`))
   return res.data;
 }

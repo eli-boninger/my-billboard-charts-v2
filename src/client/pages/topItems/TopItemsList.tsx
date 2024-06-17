@@ -9,10 +9,7 @@ interface Props {
 export const TopItemsList = (props: Props) => {
   const { topItems } = props;
   return (
-    <List
-      dense
-      sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-    >
+    <List dense className="w-full">
       {topItems.map((item: TopItem, index: number) => (
         <TopItemsListItem key={item.id} topItem={item} index={index} />
       ))}

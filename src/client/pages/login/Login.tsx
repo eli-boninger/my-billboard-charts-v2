@@ -10,7 +10,6 @@ export const Login = () => {
   const [_, setCookie] = useCookies();
 
   function handleCredentialResponse(response: { credential: string }) {
-    console.log("Encoded JWT ID token: " + response.credential);
     setCookie("google_auth_token", response.credential);
     navigate("/tracks");
   }

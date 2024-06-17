@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
   getUserSession,
