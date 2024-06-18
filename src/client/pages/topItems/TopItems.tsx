@@ -9,8 +9,8 @@ interface Props {
 }
 
 async function loader(typePath: string) {
-  const tracks = await SpotifyService.instance.getUserTopItems("tracks");
-  const artists = await SpotifyService.instance.getUserTopItems("artists");
+  const tracks = await SpotifyService.instance.getTopItems("tracks");
+  const artists = await SpotifyService.instance.getTopItems("artists");
   return { tracks, artists };
 }
 

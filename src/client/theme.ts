@@ -49,5 +49,8 @@ export const theme = (rootElement: HTMLElement) => createTheme({
     },
     typography: {
         fontFamily: ["Nunito", "Arial", "sans-serif"].join(","),
+        h1: {
+            fontSize: '2.5rem'
+        }
     },
 });

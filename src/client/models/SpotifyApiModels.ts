@@ -9,6 +9,7 @@ interface TopItem {
     rank: number;
     spotifyId: string;
     topItemId: string;
+    topItemRanks?: TopItemRank[];
     topItemType: TopItemType;
     updatedAt: Date;
     userId: string;

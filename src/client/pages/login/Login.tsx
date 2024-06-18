@@ -3,6 +3,7 @@ import SpotifyService from "../../services/SpotifyService";
 import { Header } from "./Header";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import UserService from "../../services/UserService";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export const Login = () => {
 
   useEffect(() => {
     async function getSession() {
-      const hasSession = await SpotifyService.instance.getUserSession();
+      const hasSession = await UserService.instance.getUserSession();
       if (hasSession) {
         navigate("/top_items");
       } else {

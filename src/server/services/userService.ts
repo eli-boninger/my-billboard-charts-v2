@@ -123,7 +123,7 @@ export const getTrackDetails = async (userId: string, id: TopItem["id"]) => {
     const highestRank = Math.max(...allRanks)
     const daysAtHighestRank = allRanks.reduce((accum: number, cur: number) => cur === highestRank ? accum + 1 : accum, 0);
     const daysOnChart = allRanks.length;
-    const firstDayOnChart = topItem.topItemRanks[0]
+    const firstDayOnChart = topItem.topItemRanks[0].createdAt
 
-    return { highestRank, daysAtHighestRank, daysOnChart, firstDayOnChart }
+    return { highestRank, daysAtHighestRank, daysOnChart, firstDayOnChart, topItem }
 }

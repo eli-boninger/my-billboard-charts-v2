@@ -3,4 +3,5 @@ interface TopItemDetails {
     daysAtHighestRank: number;
     daysOnChart: number;
     firstDayOnChart: Date;
+    topItem: TopItem;
 }

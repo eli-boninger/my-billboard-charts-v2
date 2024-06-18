@@ -2,20 +2,24 @@ import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import SpotifyService from "./services/SpotifyService";
 import { AuthorizeSpotifyButton } from "./pages/login/AuthorizeSpotifyButton";
+import UserService from "./services/UserService";
 
 function App() {
   const navigate = useNavigate();
   const [isSpotifyAuthorized, setIsSpotifyAuthorized] = useState(false);
+  const [hasSession, setHasSession] = useState(false);
 
   useEffect(() => {
     async function getSession() {
-      const hasSession = await SpotifyService.instance.getUserSession();
-      if (!hasSession) {
+      const currentSession = await UserService.instance.getUserSession();
+      if (!currentSession) {
+        setHasSession(false);
         navigate("/login");
+      } else {
+        setHasSession(true);
       }
 
-      const hasSpotifyAuth =
-        await SpotifyService.instance.getUserSpotifySession();
+      const hasSpotifyAuth = await SpotifyService.instance.getSpotifySession();
       if (hasSpotifyAuth) {
         setIsSpotifyAuthorized(true);
       }
@@ -31,7 +35,7 @@ function App() {
         data-login_uri="http://localhost:3000/api/auth/login"
         data-skip_prompt_cookie="google_auth_token"
       >
-        {!isSpotifyAuthorized && <AuthorizeSpotifyButton />}
+        {!isSpotifyAuthorized && hasSession && <AuthorizeSpotifyButton />}
         <Outlet />
       </div>
     </div>
