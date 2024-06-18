@@ -87,7 +87,7 @@ authRouter.post('/login', async (req: any, res: Response) => {
 
         req.session.googleId = userId;
         res.cookie('google_auth_token', credential)
-        return res.redirect('/tracks');
+        return res.redirect('/top_items');
     } catch (err) {
         console.error(err)
         return res.status(500).send("Error during token validation");

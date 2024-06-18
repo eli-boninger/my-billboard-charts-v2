@@ -13,7 +13,7 @@ export default [
         element: <Login />,
       },
       {
-        path: "/tracks",
+        path: "/top_items",
         element: <TopItems topItemType="TRACK" />,
         loader: () => TopItems.loader("top_tracks"),
       },
@@ -23,7 +23,7 @@ export default [
         loader: () => TopItems.loader("top_artists"),
       },
       {
-        path: "track_details/:id",
+        path: "top_items/:id",
         element: <ItemDetail />,
         loader: ItemDetail.loader,
       },

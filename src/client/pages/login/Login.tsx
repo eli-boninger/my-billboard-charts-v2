@@ -11,7 +11,7 @@ export const Login = () => {
 
   function handleCredentialResponse(response: { credential: string }) {
     setCookie("google_auth_token", response.credential);
-    navigate("/tracks");
+    navigate("/top_items");
   }
 
   function showGoogleLogin() {
@@ -34,7 +34,7 @@ export const Login = () => {
     async function getSession() {
       const hasSession = await SpotifyService.instance.getUserSession();
       if (hasSession) {
-        navigate("/tracks");
+        navigate("/top_items");
       } else {
         showGoogleLogin();
       }

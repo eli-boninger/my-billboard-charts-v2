@@ -10,9 +10,7 @@ function App() {
   useEffect(() => {
     async function getSession() {
       const hasSession = await SpotifyService.instance.getUserSession();
-      if (hasSession) {
-        navigate("/tracks");
-      } else {
+      if (!hasSession) {
         navigate("/login");
       }
 

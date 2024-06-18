@@ -45,7 +45,10 @@ export const TopItemsListItem = (props: Props) => {
 
   return (
     <ListItem key={topItem.id} disablePadding>
-      <Link to={`/track_details/${topItem.topItemId}`}>
+      <Link
+        to={`/top_items/${topItem.topItemId}`}
+        className="w-full no-underline text-inherit"
+      >
         <ListItemButton>
           <ListItemContent />
         </ListItemButton>

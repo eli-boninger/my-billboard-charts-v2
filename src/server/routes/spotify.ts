@@ -54,7 +54,7 @@ spotifyRouter.get(
       if (tokenRes?.status === 200) {
         const { access_token, refresh_token, expires_in } = tokenRes.data;
         await setSpotifyAuth(req, access_token, expires_in, refresh_token);
-        res.redirect("/tracks");
+        res.redirect("/top_items");
       } else {
         res.redirect("/?error=failed_token_post");
       }
