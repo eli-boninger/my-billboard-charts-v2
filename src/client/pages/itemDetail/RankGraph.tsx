@@ -44,10 +44,21 @@ const getRankByDay = (dates: Date[], ranks: TopItemRank[]) => {
 const RankGraph = (props: Props) => {
   const { ranks, scale = TimeScale.Week } = props;
   const divRef = useRef<HTMLDivElement>(null);
+  let daysToShow = TimeScaleToDays[scale];
+  if (daysToShow === -1) {
+    const minDate = ranks
+      .map((r) => new Date(r.createdAt))
+      .reduce(function (a, b) {
+        return a < b ? a : b;
+      });
+    daysToShow = Math.round(
+      (new Date().getTime() - minDate.getTime()) / (1000 * 3600 * 24)
+    );
+  }
 
   const allDates = [];
   const today = new Date();
-  for (let i = 0; i < TimeScaleToDays[scale]; i++) {
+  for (let i = 0; i < daysToShow; i++) {
     const thisDate = new Date();
     thisDate.setDate(today.getDate() - i);
     allDates.unshift(thisDate);
@@ -66,7 +77,7 @@ const RankGraph = (props: Props) => {
     if (transformedRanks === undefined) return;
 
     const earliestDate = new Date();
-    earliestDate.setDate(earliestDate.getDate() - TimeScaleToDays[scale]);
+    earliestDate.setDate(earliestDate.getDate() - daysToShow);
     earliestDate.setHours(0, 0, 0, 0);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -74,7 +85,7 @@ const RankGraph = (props: Props) => {
     const plot = Plot.plot({
       x: {
         domain: [earliestDate, today],
-        ticks: TimeScaleToDays[scale],
+        ticks: daysToShow < 32 ? daysToShow : daysToShow / 30,
         type: "time",
         label: "Date",
         labelAnchor: "center",
