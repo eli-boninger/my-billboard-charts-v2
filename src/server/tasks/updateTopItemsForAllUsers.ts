@@ -1,6 +1,9 @@
 import { PrismaClient, TopItemType, User } from "@prisma/client";
 import type { SpotifyTopItemsRequestResult, SpotifyTopResultItem } from "../models/spotifyApiModels";
 import { getTopItemsByUserId, setAllItemsUnranked, upsertTopItem } from "../services/userService";
+import { logger } from "../main";
+
+// const childLogger = logger.child({ service: 'updateTopItemsForAllUsers.ts' })
 
 const prisma = new PrismaClient();
 
@@ -9,8 +12,7 @@ function getAllSpotifyAuthorizedUsers() {
 }
 
 export const updateTopItemsForAllUsers = async () => {
-    console.info("********************************")
-    console.info("Updating top items for all users")
+    logger.info("running updateTopItemsForAllUsers")
 
     const users = await getAllSpotifyAuthorizedUsers();
     const today = new Date();
@@ -21,8 +23,7 @@ export const updateTopItemsForAllUsers = async () => {
             updated++;
         }
     })
-    console.info(`${updated} users' top items updated`);
-    console.info("********************************")
+    logger.info(`${updated} users' top items updated`);
 }
 
 const refreshAccessToken = async (refreshToken: User["spotifyRefreshToken"]) => {

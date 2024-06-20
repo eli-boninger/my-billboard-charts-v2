@@ -83,6 +83,7 @@ const RankGraph = (props: Props) => {
     today.setHours(0, 0, 0, 0);
 
     const plot = Plot.plot({
+      marginBottom: 64,
       x: {
         domain: [earliestDate, today],
         ticks: daysToShow < 32 ? daysToShow : daysToShow / 30,
@@ -90,10 +91,13 @@ const RankGraph = (props: Props) => {
         label: "Date",
         labelAnchor: "center",
         labelArrow: "none",
+        labelOffset: 40,
+        fontVariant: "bold",
       },
       y: {
         grid: true,
         label: "Chart position",
+        labelAnchor: "top",
         domain: [20, 1],
         ticks: 20,
         labelArrow: "up",
@@ -110,11 +114,14 @@ const RankGraph = (props: Props) => {
         Plot.ruleY([20]),
       ],
     });
+    plot.setAttribute("font-family", "Nunito");
+    plot.setAttribute("font-size", ".75rem");
+
     divRef.current?.append(plot);
     return () => plot.remove();
   }, [transformedRanks]);
 
-  return <div ref={divRef} />;
+  return <div className="mt-16" ref={divRef} />;
 };
 
 export default RankGraph;

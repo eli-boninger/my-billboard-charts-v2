@@ -4,7 +4,25 @@ import ViteExpress from "vite-express";
 import apiRouter from "./routes/api";
 import session from "express-session";
 import cookieParser from 'cookie-parser';
+import winston from 'winston';
+const { combine, timestamp, printf, colorize, align } = winston.format;
 import { updateTopItemsForAllUsers } from "./tasks/updateTopItemsForAllUsers";
+
+export const logger = winston.createLogger({
+  level: 'info',
+  format: combine(
+    colorize({ all: true }),
+    timestamp({
+      format: 'YYYY-MM-DD hh:mm:ss.SSS A',
+    }),
+    align(),
+    printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`)
+  ),
+  defaultMeta: { service: 'express-main' },
+  transports: [
+    new winston.transports.Console()
+  ]
+})
 
 declare module "express-session" {
   interface SessionData {
