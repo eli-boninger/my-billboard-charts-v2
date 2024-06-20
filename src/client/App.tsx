@@ -28,7 +28,7 @@ function App() {
   }, []);
 
   return (
-    <div className="bg-white dark:bg-black h-screen text-black dark:text-white">
+    <div className="bg-secondary-light dark:bg-black h-screen text-black dark:text-white h-full p-4">
       <div
         id="g_id_onload"
         data-client_id="653090121846-kta0c86afjjbtuav600shhaov6366v4e.apps.googleusercontent.com"

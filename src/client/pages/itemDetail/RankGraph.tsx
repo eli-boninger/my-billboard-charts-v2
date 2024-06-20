@@ -134,8 +134,7 @@ const RankGraph = (props: Props) => {
     return () => plot.remove();
   }, [transformedRanks]);
 
-  // label.style("font-weight", "bold");
-  return <div className="mt-16" ref={divRef} />;
+  return <div className="mt-8" ref={divRef} />;
 };
 
 export default RankGraph;
