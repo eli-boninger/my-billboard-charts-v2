@@ -2,6 +2,7 @@ import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import { useEffect, useRef } from "react";
 import { TimeScale } from "./TimeScale";
+import { useTheme } from "@mui/material";
 
 interface Props {
   ranks: TopItemRank[];
@@ -43,6 +44,7 @@ const getRankByDay = (dates: Date[], ranks: TopItemRank[]) => {
 
 const RankGraph = (props: Props) => {
   const { ranks, scale = TimeScale.Week } = props;
+  const theme = useTheme();
   const divRef = useRef<HTMLDivElement>(null);
   let daysToShow = TimeScaleToDays[scale];
   if (daysToShow === -1) {
@@ -84,23 +86,23 @@ const RankGraph = (props: Props) => {
 
     const plot = Plot.plot({
       marginBottom: 64,
+      marginTop: 32,
       x: {
         domain: [earliestDate, today],
-        ticks: daysToShow < 32 ? daysToShow : daysToShow / 30,
+        ticks: 6,
         type: "time",
         label: "Date",
         labelAnchor: "center",
         labelArrow: "none",
         labelOffset: 40,
-        fontVariant: "bold",
       },
       y: {
         grid: true,
         label: "Chart position",
         labelAnchor: "top",
         domain: [20, 1],
-        ticks: 20,
         labelArrow: "up",
+        ticks: [1, 5, 10, 15, 20],
       },
       color: { scheme: "burd" },
       marks: [
@@ -108,7 +110,7 @@ const RankGraph = (props: Props) => {
           x: "createdAt",
           y: "rank",
           marker: "circle-stroke",
-          stroke: "steelblue",
+          stroke: theme.palette.primary.dark,
         }),
         Plot.ruleX([earliestDate]),
         Plot.ruleY([20]),
@@ -118,9 +120,21 @@ const RankGraph = (props: Props) => {
     plot.setAttribute("font-size", ".75rem");
 
     divRef.current?.append(plot);
+    d3.selection()
+      .selectAll(
+        '[aria-label="x-axis label"] > text, [aria-label="y-axis label"] > text'
+      )
+      .style("font-weight", "bold")
+      .style("font-size", ".9rem")
+      .style("margin-bottom", ".5rem");
+    d3.selection()
+      .select('[aria-label="y-axis label"] > text')
+      .attr("transform", "translate(40, 35)");
+
     return () => plot.remove();
   }, [transformedRanks]);
 
+  // label.style("font-weight", "bold");
   return <div className="mt-16" ref={divRef} />;
 };
 
