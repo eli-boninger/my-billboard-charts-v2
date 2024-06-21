@@ -1,24 +1,36 @@
-import { useLoaderData } from "react-router-dom";
 import SpotifyService from "../../services/SpotifyService";
 import { TopItemsList } from "./TopItemsList";
 import { Tabs, Tab } from "@mui/material";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../context/UserContext";
 
 interface Props {
   topItemType: TopItemType;
 }
 
-async function loader(typePath: string) {
-  const tracks = await SpotifyService.instance.getTopItems("tracks");
-  const artists = await SpotifyService.instance.getTopItems("artists");
-  return { tracks, artists };
-}
-
 const TopItems = (props: Props) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const { tracks, artists } = useLoaderData() as Awaited<
-    ReturnType<typeof loader>
-  >;
+  const [tracks, setTracks] = useState<TopItem[]>([]);
+  const [artists, setArtists] = useState<TopItem[]>([]);
+  // const { tracks, artists } = useLoaderData() as Awaited<
+  //   ReturnType<typeof loader>
+  // >;
+  const user = useContext(UserContext);
+
+  useEffect(() => {
+    async function getTopItems() {
+      const tracks = await SpotifyService.instance.getTopItems("tracks", user!);
+      const artists = await SpotifyService.instance.getTopItems(
+        "artists",
+        user!
+      );
+      setTracks(tracks || []);
+      setArtists(artists || []);
+    }
+    if (user) {
+      getTopItems();
+    }
+  }, [user]);
 
   return (
     <>
@@ -71,5 +83,4 @@ function CustomTabPanel({
   );
 }
 
-TopItems.loader = loader;
 export default TopItems;

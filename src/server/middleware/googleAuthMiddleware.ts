@@ -1,29 +1,62 @@
-import { OAuth2Client } from "google-auth-library";
 import { Request, Response } from "express";
+import { auth } from "../main";
+import { PrismaClient } from "@prisma/client";
 
-const client = new OAuth2Client();
+const prisma = new PrismaClient();
+
 
 async function verifyGoogleToken(req: Request & { cookies: any }, res: Response, next: () => void) {
-    try {
-        if (!req.cookies.google_auth_token) {
-            return res.sendStatus(401)
+    if (!!req.headers.authorization) {
+        let decodedToken;
+        try {
+            decodedToken = await auth.verifyIdToken(req.headers.authorization?.split(' ')[1]);
+        } catch (e) {
+            return res.sendStatus(401);
         }
-        const ticket = await client.verifyIdToken({
-            idToken: req.cookies.google_auth_token,
-            audience: process.env.GOOGLE_AUTH_CLIENT_ID,
-        });
-        const payload = ticket.getPayload();
-        const userId = payload?.sub;
-        if (userId) {
-            req.session.googleId = userId
+
+        let existingUser;
+        try {
+            existingUser = await prisma.user.findFirst({
+                include: {
+                    FederatedCredentials: {
+                        where: {
+                            subject: decodedToken?.sub,
+                            provider: decodedToken?.iss
+                        }
+                    }
+                }
+            })
+        } catch (err) {
+            console.error(err)
+            return res.status(500).send(err)
+        }
+
+        if (existingUser) {
+            req.session.userId = existingUser.id;
         } else {
-            throw "Invalid google auth token"
+            try {
+                const newUser = await prisma.user.create({
+                    data: {
+                        email: decodedToken.email || '',
+                        FederatedCredentials: {
+                            create: [
+                                { provider: decodedToken.iss, subject: decodedToken.sub }
+                            ]
+                        }
+                    }
+
+                })
+                req.session.userId = newUser.id;
+            } catch (err) {
+                console.error(err)
+                return res.status(500).send(err)
+            }
         }
-        return next();
-    } catch (err) {
-        console.log("Google access token is expired")
-        return res.status(401).send(err)
+
+        next();
     }
+    res.sendStatus(401)
+
 }
 
 export default verifyGoogleToken;

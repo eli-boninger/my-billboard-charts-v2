@@ -15,17 +15,14 @@ export default [
       {
         path: "/top_items",
         element: <TopItems topItemType="TRACK" />,
-        loader: () => TopItems.loader("top_tracks"),
       },
       {
         path: "/artists",
         element: <TopItems topItemType="ARTIST" />,
-        loader: () => TopItems.loader("top_artists"),
       },
       {
         path: "top_items/:id",
         element: <ItemDetail />,
-        loader: ItemDetail.loader,
       },
     ],
   },

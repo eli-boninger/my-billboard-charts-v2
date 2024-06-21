@@ -1,5 +1,5 @@
-import axios, { AxiosError } from "axios";
-import { redirect } from "react-router-dom";
+import axios from "axios";
+import { User } from "firebase/auth";
 
 export default class SpotifyService {
   static _instance: SpotifyService;
@@ -14,45 +14,40 @@ export default class SpotifyService {
     return SpotifyService._instance;
   }
 
-  async authorizeSpotify() {
-    const res = await axios.post(`${this.API_URL}/authorize`);
-    window.location = res.data;
-  };
-
-
-
-  async getSpotifySession() {
-    try {
-      const res = await axios.get(`${this.API_URL}/session`);
-      return Boolean(res.data)
-    } catch (err) {
+  private async makeRequest(path: string, user: User, method = 'get', body = {}) {
+    const token = await user.getIdToken()
+    if (!token) {
       return false;
     }
+    return await axios.request(
+      {
+        url: `${this.API_URL}${path}`,
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        data: body
+      }
+    )
+  }
+
+  async authorizeSpotify(user: User) {
+    return this.makeRequest('/authorize', user)
   };
 
-  async getTopItems(itemPath: string): Promise<TopItem[]> {
-    try {
-      const res = await axios.get(`${this.API_URL}/top_${itemPath}`)
-      return res.data;
-    } catch (e) {
-      console.error(e);
-      if (e instanceof AxiosError) {
-        redirect('/login')
-      }
-    }
+  async getSpotifySession(user: User) {
+    const res = await this.makeRequest('/session', user)
+    return Boolean(res === false ? false : res.data)
+  };
 
+  async getTopItems(itemPath: string, user: User): Promise<TopItem[] | null> {
+    const res = await this.makeRequest(`/top_${itemPath}`, user)
+    return res ? res.data : null;
   }
 
-  async getTopItemDetails(itemId: string): Promise<TopItemDetails> {
-    try {
-      const res = await axios.get(`${this.API_URL}/top_items/${itemId}/details`);
-      return res.data;
-    } catch (e) {
-      console.error(e);
-      if (e instanceof AxiosError) {
-        redirect('/login')
-      }
-    }
-
+  async getTopItemDetails(itemId: string, user: User): Promise<TopItemDetails> {
+    const res = await this.makeRequest(`/top_items/${itemId}/details`, user);
+    return res ? res.data : null;
   }
+
 }

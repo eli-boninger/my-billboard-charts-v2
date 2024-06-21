@@ -3,10 +3,21 @@ import express from "express";
 import ViteExpress from "vite-express";
 import apiRouter from "./routes/api";
 import session from "express-session";
-import cookieParser from 'cookie-parser';
 import winston from 'winston';
 const { combine, timestamp, printf, colorize, align } = winston.format;
 import { updateTopItemsForAllUsers } from "./tasks/updateTopItemsForAllUsers";
+import * as admin from 'firebase-admin';
+import { getAuth } from 'firebase-admin/auth'
+import { applicationDefault } from "firebase-admin/app";
+
+const firebaseApp = admin.initializeApp({
+  credential: applicationDefault(),
+});
+
+export const auth = getAuth();
+
+
+
 
 export const logger = winston.createLogger({
   level: 'info',
@@ -37,7 +48,6 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 const app = express();
 app.use(express.json());
-app.use(cookieParser());
 
 app.use(
   session({

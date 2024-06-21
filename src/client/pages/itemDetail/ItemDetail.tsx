@@ -1,23 +1,31 @@
 import { Button, Typography } from "@mui/material";
 import SpotifyService from "../../services/SpotifyService";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import RankGraph from "./RankGraph";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { TimeScale } from "./TimeScale";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ChevronLeft } from "@mui/icons-material";
 import StatCard from "./StatCard";
-
-async function loader({ params }) {
-  const details = await SpotifyService.instance.getTopItemDetails(params.id);
-  return { details };
-}
+import { UserContext } from "../../context/UserContext";
 
 const ItemDetail = () => {
+  const { id } = useParams();
   const [scale, setScale] = useState(TimeScale.Week);
-  const { details } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  const user = useContext(UserContext);
+  const [details, setDetails] = useState<TopItemDetails | undefined>();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchDetails() {
+      const res = await SpotifyService.instance.getTopItemDetails(id!, user!);
+      setDetails(res);
+    }
+    if (user && id) {
+      fetchDetails();
+    }
+  }, [user]);
 
   const handleChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -25,6 +33,7 @@ const ItemDetail = () => {
   ) => {
     setScale(newScale);
   };
+  if (!details) return <div>loading...</div>;
   return (
     <div>
       <Button
@@ -81,5 +90,4 @@ const ItemDetail = () => {
   );
 };
 
-ItemDetail.loader = loader;
 export default ItemDetail;
