@@ -54,8 +54,10 @@ async function verifyGoogleToken(req: Request & { cookies: any }, res: Response,
         }
 
         next();
+    } else {
+        res.sendStatus(401)
     }
-    res.sendStatus(401)
+
 
 }
 
