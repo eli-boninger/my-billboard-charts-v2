@@ -5,10 +5,11 @@ import { AuthorizeSpotifyButton } from "./pages/login/AuthorizeSpotifyButton";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "./services/Firebase";
 import { UserContext } from "./context/UserContext";
+import NavBar from "./components/NavBar";
 
 function App() {
   const navigate = useNavigate();
-  const [isSpotifyAuthorized, setIsSpotifyAuthorized] = useState(false);
+  const [isSpotifyAuthorized, setIsSpotifyAuthorized] = useState(true);
   const { pathname } = useLocation();
   const [user, setUser] = useState<User | null>(null);
 
@@ -31,7 +32,7 @@ function App() {
       if (u) {
         setUser(u);
         if (pathname === "/login") {
-          navigate("/top_items");
+          navigate("/top_tracks");
         }
       } else {
         navigate("/login");
@@ -43,8 +44,11 @@ function App() {
   return (
     <div className="bg-secondary-light dark:bg-black text-black dark:text-white h-full p-4">
       <UserContext.Provider value={user}>
+        <NavBar />
         {!isSpotifyAuthorized && <AuthorizeSpotifyButton />}
-        <Outlet />
+        <div className="m-4">
+          <Outlet />
+        </div>
       </UserContext.Provider>
     </div>
   );

@@ -13,15 +13,19 @@ export default [
         element: <Login />,
       },
       {
-        path: "/top_items",
+        path: "/top_tracks",
         element: <TopItems topItemType="TRACK" />,
       },
       {
-        path: "/artists",
+        path: "/top_artists",
         element: <TopItems topItemType="ARTIST" />,
       },
       {
-        path: "top_items/:id",
+        path: "top_tracks/:id",
+        element: <ItemDetail />,
+      },
+      {
+        path: "top_artists/:id",
         element: <ItemDetail />,
       },
     ],

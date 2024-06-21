@@ -13,7 +13,7 @@ export const Login = () => {
   const handleClick = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
-        navigate("/top_items");
+        navigate("/top_tracks");
       })
       .catch((error) => {
         // Handle Errors here.

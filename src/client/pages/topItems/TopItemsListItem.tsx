@@ -11,7 +11,6 @@ interface Props {
 export const TopItemsListItem = (props: Props) => {
   const { topItem } = props;
 
-  const labelId = `list-item-label-${topItem.id}`;
   const rankChange = topItem.previousRank
     ? topItem.rank - topItem.previousRank
     : null;
@@ -46,7 +45,7 @@ export const TopItemsListItem = (props: Props) => {
   return (
     <ListItem key={topItem.id} disablePadding>
       <Link
-        to={`/top_items/${topItem.topItemId}`}
+        to={`/top_${topItem.topItemType.toLowerCase()}s/${topItem.topItemId}`}
         className="w-full no-underline text-inherit"
       >
         <ListItemButton>

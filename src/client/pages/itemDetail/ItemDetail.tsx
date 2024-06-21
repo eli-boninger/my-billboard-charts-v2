@@ -9,6 +9,7 @@ import { useContext, useEffect, useState } from "react";
 import { ChevronLeft } from "@mui/icons-material";
 import StatCard from "./StatCard";
 import { UserContext } from "../../context/UserContext";
+import Loader from "../../components/Loader";
 
 const ItemDetail = () => {
   const { id } = useParams();
@@ -33,7 +34,11 @@ const ItemDetail = () => {
   ) => {
     setScale(newScale);
   };
-  if (!details) return <div>loading...</div>;
+
+  if (!details) {
+    return <Loader />;
+  }
+
   return (
     <div>
       <Button
