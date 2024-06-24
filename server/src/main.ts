@@ -1,6 +1,5 @@
 import "dotenv/config";
 import express from "express";
-import ViteExpress from "vite-express";
 import apiRouter from "./routes/api";
 import session from "express-session";
 import winston from 'winston';
@@ -70,6 +69,6 @@ updateTopItemsForAllUsers()
 
 app.use("/api", apiRouter);
 
-ViteExpress.listen(app, PORT, () =>
+app.listen(PORT, () =>
   console.log(`Server is listening on port ${PORT}...`)
 );
