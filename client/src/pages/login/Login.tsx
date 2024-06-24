@@ -40,7 +40,7 @@ export const Login = () => {
           data-shape="rectangular"
           data-logo_alignment="left"
         ></div>
-        <Button onClick={handleClick}>Log in</Button>
+        <Button onClick={handleClick}>Log in with Google</Button>
       </div>
     </div>
   );

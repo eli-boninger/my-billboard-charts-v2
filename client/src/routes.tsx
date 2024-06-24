@@ -1,4 +1,5 @@
 import App from "./App";
+import NavBar from "./components/NavBar";
 import ItemDetail from "./pages/itemDetail/ItemDetail";
 import { Login } from "./pages/login/Login";
 import TopItems from "./pages/topItems/TopItems";
@@ -14,19 +15,39 @@ export default [
       },
       {
         path: "/top_tracks",
-        element: <TopItems topItemType="TRACK" />,
+        element: (
+          <>
+            <NavBar />
+            <TopItems topItemType="TRACK" />
+          </>
+        ),
       },
       {
         path: "/top_artists",
-        element: <TopItems topItemType="ARTIST" />,
+        element: (
+          <>
+            <NavBar />
+            <TopItems topItemType="TRACK" />
+          </>
+        ),
       },
       {
         path: "top_tracks/:id",
-        element: <ItemDetail />,
+        element: (
+          <>
+            <NavBar />
+            <ItemDetail />
+          </>
+        ),
       },
       {
         path: "top_artists/:id",
-        element: <ItemDetail />,
+        element: (
+          <>
+            <NavBar />
+            <ItemDetail />
+          </>
+        ),
       },
     ],
   },

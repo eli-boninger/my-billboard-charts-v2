@@ -11,8 +11,10 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material";
+import { auth } from "../services/Firebase";
+import { signOut } from "firebase/auth";
 
 const pages = [
   { name: "Tracks", path: "/top_tracks" },
@@ -21,7 +23,7 @@ const pages = [
 const settings = ["Logout"];
 
 function NavBar() {
-  const theme = useTheme();
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -42,6 +44,16 @@ function NavBar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogOut = async () => {
+    try {
+      await signOut(auth);
+      handleCloseUserMenu();
+      navigate("/login");
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -169,11 +181,9 @@ function NavBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem onClick={handleLogOut}>
+                <Typography textAlign="center">Log out</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
