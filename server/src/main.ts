@@ -8,13 +8,13 @@ import { updateTopItemsForAllUsers } from "./tasks/updateTopItemsForAllUsers";
 import * as admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth'
 import { applicationDefault } from "firebase-admin/app";
+import cors from 'cors'
 
 const firebaseApp = admin.initializeApp({
   credential: applicationDefault(),
 });
 
 export const auth = getAuth();
-
 
 
 
@@ -47,6 +47,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: 'http://localhost:5173' }))
 
 app.use(
   session({
