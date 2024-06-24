@@ -2,9 +2,7 @@
 <br />
 
 <div align="center">
-  <a href="https://github.com/eli-boninger/my-billboard-charts-v2">
-    <div style="font-family: monospace;font-weight:700;text-decoration:none;letter-spacing:.3rem">MY BILLBOARD CHARTS</div>
-  </a>
+  <h1>My billboard charts</h1>
 
   <p align="center">
     Keep track of your spotify listening habits over time

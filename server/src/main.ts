@@ -8,7 +8,8 @@ import { updateTopItemsForAllUsers } from "./tasks/updateTopItemsForAllUsers";
 import * as admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth'
 import { applicationDefault } from "firebase-admin/app";
-import cors from 'cors'
+import cors from 'cors';
+import cron from 'node-cron';
 
 const firebaseApp = admin.initializeApp({
   credential: applicationDefault(),
@@ -67,6 +68,13 @@ app.use(
 );
 
 updateTopItemsForAllUsers()
+cron.schedule("0 1 * * *", async () => {
+  try {
+    await updateTopItemsForAllUsers()
+  } catch (e) {
+    console.error(e)
+  }
+});
 
 app.use("/api", apiRouter);
 

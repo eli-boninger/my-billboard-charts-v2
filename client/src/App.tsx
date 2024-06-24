@@ -44,6 +44,7 @@ function App() {
   return (
     <div className="bg-secondary-light dark:bg-black text-black dark:text-white h-full p-4">
       <UserContext.Provider value={user}>
+        {pathname !== "/login" && <NavBar />}
         {!isSpotifyAuthorized && <AuthorizeSpotifyButton />}
         <div className="m-4">
           <Outlet />
