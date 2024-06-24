@@ -2,7 +2,7 @@
 <br />
 
 <div align="center">
-  <a href="https://github.com/eboninger/my-billboard-charts-v2">
+  <a href="https://github.com/eli-boninger/my-billboard-charts-v2">
     <div style="font-family: monospace;font-weight:700;text-decoration:none;letter-spacing:.3rem">MY BILLBOARD CHARTS</div>
   </a>
 
@@ -23,7 +23,7 @@
 
 ### Prerequisites
 
-This app relies on the configuration of several cloud tools. In order to properly run this locally, you'll need a firebase app setup as well as a spotify developer account with an application created and an API key.
+This app relies on the configuration of several cloud tools. In order to properly run this locally, you'll need a firebase app setup as well as a spotify developer account with an application created and an API key. You'll also need postgres running locally with a new database create for this application.
 
 ### Run client
 
