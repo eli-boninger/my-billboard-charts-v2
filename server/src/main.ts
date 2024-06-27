@@ -48,7 +48,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:5173' }))
+app.use(cors({ origin: process.env.WEB_APP_URL }))
 
 app.use(
   session({
