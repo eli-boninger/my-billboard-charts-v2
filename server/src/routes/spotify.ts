@@ -15,7 +15,7 @@ spotifyRouter.post("/authorize", (req, res) => {
     response_type: "code",
     client_id: process.env.SPOTIFY_CLIENT_ID || "",
     scope: process.env.SPOTIFY_SCOPES || "",
-    redirect_uri: process.env.SPOTIFY_AUTH_REDIRECT_URL || "",
+    redirect_uri: `${process.env.SERVER_URL}/api/spotify/callback`,
     state: uuidv4(),
   });
   res.send(`https://accounts.spotify.com/authorize?${params.toString()}`);
@@ -33,7 +33,7 @@ spotifyRouter.get(
       formData.append("code", code);
       formData.append(
         "redirect_uri",
-        process.env.SPOTIFY_AUTH_REDIRECT_URL || "S"
+        `${process.env.SERVER_URL}/api/spotify/callback`
       );
       formData.append("grant_type", "authorization_code");
 
@@ -54,9 +54,9 @@ spotifyRouter.get(
       if (tokenRes?.status === 200) {
         const { access_token, refresh_token, expires_in } = tokenRes.data;
         await setSpotifyAuth(req, access_token, expires_in, refresh_token);
-        res.redirect("/top_items");
+        res.redirect(`${process.env.WEB_APP_URL}/top_items`);
       } else {
-        res.redirect("/?error=failed_token_post");
+        res.redirect(`${process.env.WEB_APP_URL}/?error=failed_token_post`);
       }
     }
   }
